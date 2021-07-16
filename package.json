@@ -2,10 +2,12 @@
     "name": "license-checker-rseidelsohn",
     "description": "Feature enhanced version of the original license-checker v25.0.1",
     "author": "Roman Seidelsohn <rseidelsohn@gmail.com>",
-    "version": "1.2.0",
+    "version": "2.1.1",
+    "license": "BSD-3-Clause",
     "contributors": [
         "Adam Weber <adamweber01@gmail.com>",
         "Andrew Couch <andy@couchand.com>",
+        "Andrii Kostenko <andrey@kostenko.name>",
         "Asharma <Asharma@agtinternational.com>",
         "Bryan English <bryan@bryanenglish.com>",
         "Christoph Werner <christoph@codepunkt.de>",
@@ -31,6 +33,7 @@
         "Mark Tse <mark.tse@d2l.com>",
         "Mark Tse <neverendingqs@users.noreply.github.com>",
         "Mattias Amnefelt <mattiasa@cantemo.com>",
+        "Mehmet Baker <mehmet@mehmetbaker.dev>",
         "Michael Kühnel <mail@michael-kuehnel.de>",
         "Michael Williamson <mike@zwobble.org>",
         "Paul Mandel <paul.mand3l@gmail.com>",
@@ -52,6 +55,7 @@
         "Yuri Zapuchlak <yuri@vidmaker.com>",
         "badunk <baduncaduncan@gmail.com>",
         "creising <creising@gmail.com>",
+        "dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
         "gdw2 <gdwarner@Gmail.com>",
         "ktmouk <ktmouk@gmail.com>",
         "santiagocanti <santiago.canti@auth0.com>",
@@ -71,10 +75,10 @@
         "treeify": "^1.1.0"
     },
     "devDependencies": {
-        "@types/node": "^14.14.37",
-        "babel-eslint": "^10.1.0",
+        "@types/mssql": "6.0.8",
+        "@types/node": "^15.6.1",
         "detectionizr": "*",
-        "eslint": "^7.23.0",
+        "eslint": "^7.25.0",
         "format-package-json": "^0.2.0",
         "git-contributors": "^0.2.3",
         "github-changes": "^2.0.2",
@@ -98,7 +102,7 @@
     },
     "scripts": {
         "changes": "github-changes -o RSeidelsohn -r license-checker-rseidelsohn",
-        "contrib": "./scripts/contrib.js",
+        "contrib": "node ./scripts/contrib.js",
         "pretest": "eslint --fix .",
         "test": "jenkins-mocha ./tests/*.js",
         "posttest": "nyc check-coverage && nyc report -r lcov -r text -r text-summary"
@@ -120,6 +124,6 @@
         "lines": 96,
         "statements": 96,
         "functions": 95,
-        "branches": 89
+        "branches": 85
     }
 }
