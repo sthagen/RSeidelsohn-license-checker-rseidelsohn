@@ -1,3 +1,7 @@
+<img src="https://img.shields.io/npm/l/license-checker-rseidelsohn" />
+
+[![NPM](https://nodei.co/npm/license-checker-rseidelsohn.png)](https://nodei.co/npm/license-checker-rseidelsohn/)
+
 # NPM License Checker
 
 _This is a fork of davglass' [license-checker v.25.0.1](https://github.com/davglass/license-checker/releases/tag/v25.0.1) - Since that code doesn't seem to be updated regularly, I created this fork for being able to adding new features and fixing bugs._
@@ -65,6 +69,18 @@ You could see something like this:
    ├─ repository: https://github.com/visionmedia/debug
    └─ licenses: MIT*
 ```
+
+## Changes
+
+### Version 3.0.0
+
+From now on, when you give the `--files` option, this tool outputs the path to the _copied_ license files rather than to
+the originals. When the `relativeLicensePath` option is given, this path will either be relative to the working
+directory or - if also the `out` option is given - relative to the `out` path.
+
+When using the `--out` option, you will not see output in the console, as the output goes into the file specified by
+`--out`. When using the `--files` option without `--out` option, you will now get console output, which was not the case
+before.
 
 ## All options in alphabetical order:
 
