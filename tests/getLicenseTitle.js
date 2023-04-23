@@ -158,13 +158,20 @@ describe('license parser', function () {
         assert.equal(data, 'Public Domain');
     });
 
-    xit('License at URL check', function () {
-        let data = getLicenseTitle('http://example.com/foo');
+    it('License at URL check', function () {
+        let data = getLicenseTitle('License: http://example.com/foo');
         assert.equal(data, 'Custom: http://example.com/foo');
         data = getLicenseTitle('See license at http://example.com/foo');
         assert.equal(data, 'Custom: http://example.com/foo');
-        data = getLicenseTitle('https://example.com/foo');
+        data = getLicenseTitle('license: https://example.com/foo');
         assert.equal(data, 'Custom: https://example.com/foo');
+    });
+
+    it('Likely not a license at URL check', function () {
+        let data = getLicenseTitle('http://example.com/foo');
+        assert.equal(data, null);
+        data = getLicenseTitle('See at http://example.com/foo');
+        assert.equal(data, null);
     });
 
     it('License at file check', function () {
