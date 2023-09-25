@@ -2,7 +2,7 @@
   "name": "license-checker-rseidelsohn",
   "description": "Extract NPM package licenses - Feature enhanced version of the original license-checker v25.0.1",
   "author": "Roman Seidelsohn <rseidelsohn@gmail.com>",
-  "version": "4.2.7",
+  "version": "4.2.8",
   "license": "BSD-3-Clause",
   "private": false,
   "engines": {
@@ -117,6 +117,7 @@
     "Yukari Ishibashi <ibeucaly@users.noreply.github.com>",
     "Yuri Zapuchlak <yuri@vidmaker.com>",
     "badunk <baduncaduncan@gmail.com>",
+    "chris <earthaccount+gh@mailbox.org>",
     "creising <creising@gmail.com>",
     "dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
     "gdw2 <gdwarner@Gmail.com>",
