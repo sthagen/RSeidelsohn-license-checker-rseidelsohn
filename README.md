@@ -11,6 +11,9 @@
     -   [Table of Contents](#table-of-contents)
     -   [Introduction](#introduction)
     -   [Changes](#changes)
+        -   [Version 4.4.1](#Version-4-4-1)
+        -   [Version 4.4.0](#Version-4-4-0)
+        -   [Version 4.3.1](#Version-4-3-1)
         -   [Version 4.3.0](#Version-4-3-0)
         -   [Version 4.2.11](#Version-4-2-11)
         -   [Version 4.2.10](#Version-4-2-10)
@@ -43,6 +46,7 @@
     -   [Debugging](#debugging)
     -   [How Licenses are Found](#how-licenses-are-found)
     -   [Related information sources on the internet](#related-information-sources-on-the-internet)
+`version` can either be an exact version or a semver range, multiple ranges are supported for a single package, for example:
 
 ## <a id="a-message-from-the-maintainer"></a>A message from the maintainer
 
@@ -123,6 +127,22 @@ You could see something like this:
 ```
 
 ## <a id="changes"></a>Changes (see a more detailed and always up-to-date list [here](https://github.com/RSeidelsohn/license-checker-rseidelsohn/releases))
+
+### <a id="Version-4-4-1"></a>Version 4.4.1
+
+fix: Fix errors that broke the whole new version (sorry for these)
+
+### <a id="Version-4-4-0"></a>Version 4.4.0
+
+chore(deps-dev): bump braces from 3.0.2 to 3.0.3 by @dependabot in https://github.com/RSeidelsohn/license-checker-rseidelsohn/pull/114
+chore: only include necessary files in package by @ol-teuto in https://github.com/RSeidelsohn/license-checker-rseidelsohn/pull/106
+feat: allow specifying ranges in clarifications file and add strict usage checking for them by @ol-teuto in https://github.com/RSeidelsohn/license-checker-rseidelsohn/pull/110
+feat: Add new option `clarificationsMatchAll` by @ol-teuto
+
+### <a id="Version-4-3-1"></a>Version 4.3.1
+
+misc: Move from `require` to `import` in all the files
+misc: Update indexHelpers.js by @ArsArmandi in https://github.com/RSeidelsohn/license-checker-rseidelsohn/pull/108
 
 ### <a id="Version-4-3-0"></a>Version 4.3.0
 
@@ -243,6 +263,7 @@ before.
 
 -   `--angularCli` is just a synonym for `--plainVertical`
 -   `--clarificationsFile [filepath]` A file that describe the license clarifications for each package, see clarificationExample.json, any field available to the customFormat option can be clarified. The clarifications file can also be used to specify a subregion of a package's license file (instead reading the entire file)
+-   `--clarificationsMatchAll [boolean]` This optional new feature is still lacking a description - to be done
 -   `--csv` output in csv format
 -   `--csvComponentPrefix` prefix column for component in csv format
 -   `--customPath` to add a custom Format file in JSON
@@ -316,7 +337,30 @@ The `--clarificationsFile` option can be used to provide custom processing instr
 }
 ```
 
-## <a id="custom_format"></a>Custom format
+`version` can either be an exact version or a semver range, multiple ranges are supported for a single package, for example:
+
+```json5
+{
+    "package_name@^1": {
+        // Any field available in customFormat can be clarified
+        "licenses": "GPL",
+        // ... other fields, see above
+    },
+    "package_name@^2": {
+        // Any field available in customFormat can be clarified
+        "licenses": "MIT",
+        // ... other fields, see above
+    },
+}
+```
+
+For overlapping ranges, the first matching entry is used.
+
+The `--clarificationsMatchAll` option, when enabled, raises an error if not all specified clarifications were used, it is off by default.
+
+<a name="custom_format"></a>
+
+## Custom format
 
 The `--customPath` option can be used with CSV to specify the columns. Note that
 the first column, `module_name`, will always be used.
