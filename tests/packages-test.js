@@ -1,134 +1,107 @@
-const assert = require('assert');
-const path = require('path');
-const spawn = require('child_process').spawnSync;
+import assert from 'node:assert';
+import { spawn } from 'node:child_process';
+import path from 'node:path';
 
-describe('bin/license-checker-rseidelsohn', function () {
-    this.timeout(8000);
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-    it('should restrict the output to the provided packages', function () {
-        var restrictedPackages = ['@types/node@16.18.11'];
-        var output = spawn(
-            'node',
-            [
-                path.join(__dirname, '../bin/license-checker-rseidelsohn'),
-                '--json',
-                '--includePackages',
-                restrictedPackages.join(';'),
-            ],
-            {
-                cwd: path.join(__dirname, '../'),
-            },
-        );
+const streamToString = stream =>
+	new Promise((resolve, reject) => {
+		const chunks = [];
+		stream.on('data', chunk => chunks.push(chunk));
+		stream.on('end', () => resolve(chunks.join('')));
+		stream.on('error', reject);
+	});
 
-        console.log(output.stderr.toString());
-        assert.deepEqual(Object.keys(JSON.parse(output.stdout.toString())), restrictedPackages);
-    });
+const runBin = async (args, opts = {}) => {
+	const cwd = opts.cwd || path.join(__dirname, '../');
+	const output = spawn('node', [path.join(__dirname, '../bin/license-checker-rseidelsohn'), ...args], {
+		cwd,
+		stdio: ['ignore', 'pipe', process.stderr],
+	});
+	return await streamToString(output.stdout);
+};
 
-    it('should exclude provided excludedPackages from the output', function () {
-        var excludedPackages = ['@types/node@15.0.1', 'spdx-satisfies@5.0.0', 'y18n@3.2.1'];
-        var output = spawn(
-            'node',
-            [
-                path.join(__dirname, '../bin/license-checker-rseidelsohn'),
-                '--json',
-                '--excludePackages',
-                excludedPackages.join(';'),
-            ],
-            {
-                cwd: path.join(__dirname, '../'),
-            },
-        );
+describe('bin/license-checker-rseidelsohn', () => {
+	it('should restrict the output to the provided packages', async () => {
+		var restrictedPackages = ['@types/node@24.12.4'];
+		var stdout = await runBin(['--json', '--includePackages', restrictedPackages.join(';')]);
+		assert.deepEqual(Object.keys(JSON.parse(stdout)), restrictedPackages);
+	});
 
-        var packages = Object.keys(JSON.parse(output.stdout.toString()));
-        excludedPackages.forEach(function (pkg) {
-            assert.ok(!packages.includes(pkg));
-        });
-    });
+	it('should exclude provided excludedPackages from the output', async () => {
+		var excludedPackages = ['@types/node@15.0.1', 'spdx-satisfies@5.0.0', 'y18n@3.2.1'];
+		var stdout = await runBin(['--json', '--excludePackages', excludedPackages.join(';')]);
 
-    it('should exclude packages starting with', function () {
-        const excludedPackages = ['@types', 'spdx'];
-        const output = spawn(
-            'node',
-            [
-                path.join(__dirname, '../bin/license-checker-rseidelsohn'),
-                '--json',
-                '--excludePackagesStartingWith',
-                excludedPackages.join(';'),
-            ],
-            {
-                cwd: path.join(__dirname, '../'),
-            },
-        );
+		var packages = Object.keys(JSON.parse(stdout));
+		excludedPackages.forEach(pkg => {
+			assert.ok(!packages.includes(pkg));
+		});
+	});
 
-        const packages = Object.keys(JSON.parse(output.stdout.toString()));
+	it('should exclude packages starting with', async () => {
+		const excludedPackages = ['@types', 'spdx'];
+		const stdout = await runBin(['--json', '--excludePackagesStartingWith', excludedPackages.join(';')]);
 
-        let illegalPackageFound = false;
+		const packages = Object.keys(JSON.parse(stdout));
 
-        // Loop through all packages and check if they start with one of the excluded packages
-        packages.forEach(function (p) {
-            excludedPackages.forEach(function (excludedPackage) {
-                if (p.startsWith(excludedPackage)) {
-                    illegalPackageFound = true;
-                }
-            });
-        });
+		let illegalPackageFound = false;
 
-        // If an illegal package was found, the test fails
-        assert.ok(!illegalPackageFound);
-    });
+		// Loop through all packages and check if they start with one of the excluded packages
+		packages.forEach(p => {
+			excludedPackages.forEach(excludedPackage => {
+				if (p.startsWith(excludedPackage)) {
+					illegalPackageFound = true;
+				}
+			});
+		});
 
+		// If an illegal package was found, the test fails
+		assert.ok(!illegalPackageFound);
+	});
 
-    it('should combine various types of inclusion and exclusions', function () {
-        const excludedPrefix = ['@types', 'spdx'];
-        const excludedNames = ['rimraf'];
-        const output = spawn(
-            'node',
-            [
-                path.join(__dirname, '../bin/license-checker-rseidelsohn'),
-                '--json',
-                '--excludePackages',
-                excludedNames.join(';'),
-                '--excludePackagesStartingWith',
-                excludedPrefix.join(';'),
-            ],
-            {
-                cwd: path.join(__dirname, '../'),
-            },
-        );
-        const packages = Object.keys(JSON.parse(output.stdout.toString()));
+	it('should combine various types of inclusion and exclusions', async () => {
+		const excludedPrefix = ['@types', 'spdx'];
+		const excludedNames = ['rimraf'];
+		const stdout = await runBin([
+			'--json',
+			'--excludePackages',
+			excludedNames.join(';'),
+			'--excludePackagesStartingWith',
+			excludedPrefix.join(';'),
+		]);
 
-        let illegalPackageFound = false;
+		const packages = Object.keys(JSON.parse(stdout));
 
-        packages.forEach(function (p) {
-            excludedNames.forEach(function (pkgName) {
-                if(pkgName.indexOf('@')>1){
-                    // check for the exact version
-                    if(p === pkgName) illegalPackageFound = true;
-                } else if (p.startsWith(`${pkgName}@`)) {
-                    illegalPackageFound = true;
-                }
-            });
-            excludedPrefix.forEach(function (prefix) {
-                if (p.startsWith(prefix)) {
-                    illegalPackageFound = true;
-                }
-            });
-        });
+		let illegalPackageFound = false;
 
-        // If an illegal package was found, the test fails
-        assert.ok(!illegalPackageFound);
-    });
+		packages.forEach(p => {
+			excludedNames.forEach(pkgName => {
+				if (pkgName.indexOf('@') > 1) {
+					// check for the exact version
+					if (p === pkgName) {
+						illegalPackageFound = true;
+					}
+				} else if (p.startsWith(`${pkgName}@`)) {
+					illegalPackageFound = true;
+				}
+			});
+			excludedPrefix.forEach(prefix => {
+				if (p.startsWith(prefix)) {
+					illegalPackageFound = true;
+				}
+			});
+		});
 
-    it('should exclude private packages from the output', function () {
-        var output = spawn(
-            'node',
-            [path.join(__dirname, '../bin/license-checker-rseidelsohn'), '--json', '--excludePrivatePackages'],
-            {
-                cwd: path.join(__dirname, 'fixtures', 'privateModule'),
-            },
-        );
+		// If an illegal package was found, the test fails
+		assert.ok(!illegalPackageFound);
+	});
 
-        var packages = Object.keys(JSON.parse(output.stdout.toString()));
-        assert.equal(packages.length, 0);
-    });
-});
+	it('should exclude private packages from the output', async () => {
+		const stdout = await runBin(['--json', '--excludePrivatePackages'], {
+			cwd: path.join(__dirname, 'fixtures', 'privateModule'),
+		});
+
+		var packages = Object.keys(JSON.parse(stdout));
+		assert.equal(packages.length, 0);
+	});
+}, /* timeout */ 8000);

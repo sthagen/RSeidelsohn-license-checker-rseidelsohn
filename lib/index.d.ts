@@ -94,6 +94,7 @@ export interface InitOpts {
 	 * Specify the columns for CSV format
 	 * or add the specified items for JSON format
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: TODO let's switch to proper TS soon-ish, instead of writing the d.ts manually
 	customFormat?: Record<string, any> | undefined;
 	/**
 	 * Ignore peerDependencies
@@ -176,7 +177,9 @@ export interface ModuleInfos {
 }
 
 /**
- * Run the license check
- * @param opts specifies the path to the module to check dependencies of
+ * Run the license check.
+ *
+ * @param opts Specifies the path to the module to check dependencies of.
+ * @param callback Called after the checker finished.
  */
-export function init(opts: InitOpts, callback: (err: Error, ret: ModuleInfos) => void): void;
+export function init(opts: InitOpts, callback: (err: Error | undefined, ret: ModuleInfos) => void): void;

@@ -1,17 +1,17 @@
-const assert = require('assert');
-const path = require('path');
-const spawn = require('child_process').spawn;
+import assert from 'node:assert';
+import { spawn } from 'node:child_process';
+import path from 'node:path';
 
-describe('bin/license-checker-rseidelsohn', function () {
-    this.timeout(8000);
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-    it('should exit 0', function (done) {
-        spawn('node', [path.join(__dirname, '../bin/license-checker-rseidelsohn')], {
-            cwd: path.join(__dirname, '../'),
-            stdio: 'ignore',
-        }).on('exit', function (code) {
-            assert.equal(code, 0);
-            done();
-        });
-    });
-});
+describe('bin/license-checker-rseidelsohn', () => {
+	it('should exit 0', done => {
+		spawn('node', [path.join(__dirname, '../bin/license-checker-rseidelsohn')], {
+			cwd: path.join(__dirname, '../'),
+			stdio: 'ignore',
+		}).on('exit', code => {
+			assert.equal(code, 0);
+			done();
+		});
+	});
+}, /* timeout */ 8000);

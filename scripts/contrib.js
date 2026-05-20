@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const join = require('path').join;
+const join = require('node:path').join;
 const format = require('format-package-json');
 const GitContributors = require('git-contributors').GitContributors;
 const opts = join(__dirname, '../');
@@ -61,14 +61,14 @@ json.contributors = [
 	'zodiac403 <zodiac403@gmx.de>',
 ]; //clear it
 
-GitContributors.list(opts, function (err, result) {
-	result.forEach(function (item) {
+GitContributors.list(opts, (_err, result) => {
+	result.forEach(item => {
 		json.contributors.push([item.name, `<${item.email}>`].join(' '));
 	});
 
 	json.contributors.sort();
 
-	format(pkg, json, function () {
+	format(pkg, json, () => {
 		console.log(`Wrote ${result.length} contributors to: ${pkg}`);
 	});
 });
